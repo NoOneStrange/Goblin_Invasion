@@ -1,7 +1,7 @@
 import pygame
 
 class Elf:
-    """Klasa przeznaczona na modyfikacje statku gracza"""
+    """Klasa przeznaczona na modyfikacje elfiego wojownika"""
 
     def __init__(self, gi_game):
         """Inicjalizacja statku i jego położenia"""
@@ -12,10 +12,10 @@ class Elf:
         self.image = pygame.image.load('images/elf.bmp')
         self.rect = self.image.get_rect()
 
-        #Każdy nowy statek będzie na środku dołu ekranu
+        #Każdy nowy elf będzie na środku dołu ekranu
         self.rect.midbottom = self.screen_rect.midbottom
 
-        #Położenie poziome statku jest przechowywane w postaci liczby zmiennoprzecinkowej
+        #Położenie poziome elfa jest przechowywane w postaci liczby zmiennoprzecinkowej
         self.x = float(self.rect.x)
 
         #Opcje wskazujące na porszuanie się statku

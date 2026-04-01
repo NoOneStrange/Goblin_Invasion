@@ -21,7 +21,7 @@ class Arrow(Sprite):
     def update(self):
         """Ruch strzały na ekranie"""
         #Aktualizacja położenia strzały
-        self.y -= self.settings.arrow_spped
+        self.y -= self.settings.arrow_speed
         #Aktualizacjja prostokąta strzały
         self.rect.y = self.y
 
