@@ -42,14 +42,20 @@ class GoblinInvasion:
 
         self._create_army()
 
+        #Uruchomienie gry w stanie aktywnym
+        self.game_active = True
+
     def run_game(self):
         """Rozpoczęcie pętli głównej gry"""
         while True:
             self._check_events()
-            self.elf.update()
-            self.arrow.update()
-            self._update_arrows()
-            self._update_goblins()
+
+            if self.game_active:
+                self.elf.update()
+                self.arrow.update()
+                self._update_arrows()
+                self._update_goblins()
+
             self._update_screen()
             self.clock.tick(60)
 
@@ -138,27 +144,35 @@ class GoblinInvasion:
 
     def _elf_hit(self):
         """Reakcja na uderzenie goblina w elfa"""
-        self.stats.elfs_left -= 1
+        if self.stats.elfs_left > 0:
+            self.stats.elfs_left -= 1
 
-        self.elf.killed_elf(2, self._update_screen)
+            self.elf.killed_elf(2, self._update_screen)
 
-        self.arrow.empty()
-        self.goblins.empty()
+            self.arrow.empty()
+            self.goblins.empty()
 
-        self._create_army()
-        self.elf.center_elf()
+            self._create_army()
+            self.elf.center_elf()
+        else:
+            self.elf.image = self.elf.image_dead
+            self.game_active = False
 
     def _forest_lost(self):
         """Reakcja na przejęcie lasu"""
-        self.stats.elfs_left -= 1
+        if self.stats.elfs_left > 0:
+            self.stats.elfs_left -= 1
 
-        self.elf.forest_lost(2, self._update_screen)
+            self.elf.forest_lost(2, self._update_screen)
 
-        self.arrow.empty()
-        self.goblins.empty()
+            self.arrow.empty()
+            self.goblins.empty()
 
-        self._create_army()
-        self.elf.center_elf()
+            self._create_army()
+            self.elf.center_elf()
+        else:
+            self.elf.image = self.elf.image_scared
+            self.game_active = False
 
     def _check_goblins_bottom(self):
         """Sprawdzenie czy goblin dotarł do dolnej krawędzi ekranu"""
