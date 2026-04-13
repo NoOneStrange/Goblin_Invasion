@@ -9,12 +9,19 @@ class Settings:
         self.bg_color = (34, 139, 34)
 
         #Ustawienia elfa
-        self.elf_speed = 5.0
+        self.elf_speed = 4.0
+        self.elf_limit = 3
 
         #Ustawienia strzały
         self.arrow_speed = 6.0
-        self.arrow_width = 3
-        self.arrow_height = 15
+        self.arrow_width = 6
+        self.arrow_height = 20
         self.arrow_color = (150, 75, 0)
-        self.arrow_allowed = 10
+        self.arrow_allowed = 8
+
+        #Ustawienia goblina
+        self.goblin_speed = 1.5
+        self.army_drop_speed = 20
+        #direction 1 ruch w prawo, -1 ruch w lewo
+        self.army_direction = 1
 

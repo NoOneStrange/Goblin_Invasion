@@ -3,8 +3,10 @@ import pygame
 import math
 
 from settings import Settings
+from game_stats import GameStats
 from elf import Elf
 from arrow import Arrow
+from goblin import Goblin
 
 class GoblinInvasion:
     """Ogólna klasa przeznaczona do zarządzania zasobami i sposobem działania gry."""
@@ -31,8 +33,14 @@ class GoblinInvasion:
         self.scroll = 0
         self.tiles = math.ceil(self.settings.screen_height / self.bg.get_height()) + 1
 
+        #Egzemplarz danych statystycznych
+        self.stats = GameStats(self)
+
         self.elf = Elf(self)
         self.arrow = pygame.sprite.Group()
+        self.goblins = pygame.sprite.Group()
+
+        self._create_army()
 
     def run_game(self):
         """Rozpoczęcie pętli głównej gry"""
@@ -41,6 +49,7 @@ class GoblinInvasion:
             self.elf.update()
             self.arrow.update()
             self._update_arrows()
+            self._update_goblins()
             self._update_screen()
             self.clock.tick(60)
 
@@ -60,6 +69,10 @@ class GoblinInvasion:
             self.elf.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.elf.moving_left = True
+        elif event.key == pygame.K_UP:
+            self.elf.moving_top = True
+        elif event.key == pygame.K_DOWN:
+            self.elf.moving_bottom = True
         elif event.key == pygame.K_q:
             sys.exit()
         elif event.key == pygame.K_SPACE:
@@ -71,6 +84,10 @@ class GoblinInvasion:
             self.elf.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.elf.moving_left = False
+        elif event.key == pygame.K_UP:
+            self.elf.moving_top = False
+        elif event.key == pygame.K_DOWN:
+            self.elf.moving_bottom = False
 
     def _fire_arrow(self):
         """Tworzy nową strzałę i dodaje ją do grupy"""
@@ -87,7 +104,19 @@ class GoblinInvasion:
         for arrow in self.arrow.copy():
             if arrow.rect.bottom <= 0:
                 self.arrow.remove(arrow)
+
+        self._check_arrow_goblin_collisions()
+
+    def _check_arrow_goblin_collisions(self):
+        """Reakcja na kolizję między strzałą a goblinem"""
+        #Sprawdzenie trafienia i jeżeli wystąpiło, usunięcie strzały i przeciwnika
+        collisions = pygame.sprite.groupcollide(self.arrow, self.goblins, True, True)
     
+        if not self.goblins:
+            #Pozbycie się istniejących strzał i utworzenie nowej armi
+            self.arrow.empty()
+            self._create_army()
+
     def _update_screen(self):
         """Uaktualnienie obrazów na ekranie i przejście do nowego ekranu."""
         #Rysowanie przewijalnego tła
@@ -100,11 +129,91 @@ class GoblinInvasion:
             self.scroll = 0
 
         self.elf.blitme()
+        self.goblins.draw(self.screen)
 
         for arrow in self.arrow.sprites():
             arrow.draw_arrow()
 
         pygame.display.flip()
+
+    def _elf_hit(self):
+        """Reakcja na uderzenie goblina w elfa"""
+        self.stats.elfs_left -= 1
+
+        self.elf.killed_elf(2, self._update_screen)
+
+        self.arrow.empty()
+        self.goblins.empty()
+
+        self._create_army()
+        self.elf.center_elf()
+
+    def _forest_lost(self):
+        """Reakcja na przejęcie lasu"""
+        self.stats.elfs_left -= 1
+
+        self.elf.forest_lost(2, self._update_screen)
+
+        self.arrow.empty()
+        self.goblins.empty()
+
+        self._create_army()
+        self.elf.center_elf()
+
+    def _check_goblins_bottom(self):
+        """Sprawdzenie czy goblin dotarł do dolnej krawędzi ekranu"""
+        for goblin in self.goblins.sprites():
+            if goblin.rect.bottom >= self.settings.screen_height:
+                self._forest_lost()
+                break
+
+    def _create_army(self):
+        """Utworzenie armi goblinów"""
+        goblin = Goblin(self)
+        goblin_width, goblin_height = goblin.rect.size
+
+        current_x, current_y = goblin_width, goblin_height
+        while current_y < (self.settings.screen_height - 5 * goblin_height):
+            while current_x < (self.settings.screen_width - 2 * goblin_width): #Gdyby ograniczyć się do pierwszej części nawiasu, jeden goblin będzie za prawą stroną ekranu, stąd margines
+                self._create_goblin(current_x, current_y)
+                current_x += 2 * goblin_width
+
+            #Wyzerowanie x oraz zejście niżej y przy końcu rzędu
+            current_x = goblin_width
+            current_y += 2 * goblin_height
+
+    def _create_goblin(self, x_position, y_position):
+        """Tworzenie goblina w rzędzie"""
+        new_goblin = Goblin(self)
+        new_goblin.x = x_position
+        new_goblin.rect.x = x_position
+        new_goblin.rect.y = y_position
+        self.goblins.add(new_goblin)
+    
+    def _update_goblins(self):
+        """Uaktualnienie położenia goblinów"""
+        self._check_army_edges()
+        self.goblins.update()
+
+        if pygame.sprite.spritecollideany(self.elf, self.goblins):
+            print("Elfi łucznik został pokonany!!!")
+            self._elf_hit()
+
+        #Wyszukanie goblinów którzy przekroczą las
+        self._check_goblins_bottom()
+
+    def _check_army_edges(self):
+        """Reakcja na dotarcie goblina do krawędzi"""
+        for goblin in self.goblins.sprites():
+            if goblin.check_edges():
+                self._change_army_direction()
+                break
+
+    def _change_army_direction(self):
+        """Przesunięcie armi w dó i zmiana kierunku jej poruszania się"""
+        for goblin in self.goblins.sprites():
+            goblin.rect.y += self.settings.army_drop_speed
+        self.settings.army_direction *= -1
 
 if __name__ == '__main__':
     gi = GoblinInvasion()

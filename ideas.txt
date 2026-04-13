@@ -1,7 +1,5 @@
 do wprowadzenia:
 -podmiana prostokątu na strzałę
--dodanie backgroundu z kolorowej przestrzeni na las
--ruch backgroundu
 -animacje ruchu nogami elfa
 
 Później:
