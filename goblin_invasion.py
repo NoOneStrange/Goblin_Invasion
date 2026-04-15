@@ -43,7 +43,7 @@ class GoblinInvasion:
         self._create_army()
 
         #Uruchomienie gry w stanie aktywnym
-        self.game_active = True
+        self.game_active = False
 
     def run_game(self):
         """Rozpoczęcie pętli głównej gry"""
