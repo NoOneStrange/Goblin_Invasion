@@ -5,6 +5,8 @@ class GameStats:
         """Inicjalizacja danych statystycznych"""
         self.settings = gi_game.settings
         self.reset_stats()
+        #Najlepszy wynik, nigdy nie wyzerowany
+        self.high_score = 0
 
     def reset_stats(self):
         """

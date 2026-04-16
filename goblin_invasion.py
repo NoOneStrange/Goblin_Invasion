@@ -39,9 +39,6 @@ class GoblinInvasion:
         self.scroll = 0
         self.tiles = math.ceil(self.settings.screen_height / self.bg.get_height()) + 1
 
-        #Egzemplarz danych statystycznych
-        self.stats = GameStats(self)
-
         self.elf = Elf(self)
         self.arrow = pygame.sprite.Group()
         self.goblins = pygame.sprite.Group()
@@ -87,6 +84,7 @@ class GoblinInvasion:
         if button_clicked and not self.game_active:
             #Wyzerowanie danych statystycznych gry
             self.stats.reset_stats()
+            self.sb. prep_score()
             self.game_active = True
 
             #Przywrócenie domyślnego wyglądu elfa po poprzedniej rozgrywce
@@ -157,6 +155,12 @@ class GoblinInvasion:
             self.arrow.empty()
             self._create_army()
 
+        if collisions:
+            for goblins in collisions.values():
+                self.stats.score += self.settings.goblin_points * len(goblins)
+            self.sb.prep_score()
+            self.sb.check_high_score()
+ 
     def _update_screen(self):
         """Uaktualnienie obrazów na ekranie i przejście do nowego ekranu."""
         #Rysowanie przewijalnego tła

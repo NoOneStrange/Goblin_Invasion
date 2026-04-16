@@ -25,3 +25,15 @@ class Settings:
         #direction 1 ruch w prawo, -1 ruch w lewo
         self.army_direction = 1
 
+        #Inicjalizacja ustawień dynamicznych (m.in. punktacji)
+        self.initialize_dynamic_settings()
+
+    def initialize_dynamic_settings(self):
+        
+        #Punktacja
+        self.goblin_points = 50
+
+
+
+
+
