@@ -4,6 +4,7 @@ import math
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from elf import Elf
 from arrow import Arrow
@@ -22,6 +23,10 @@ class GoblinInvasion:
             (self.settings.screen_width, self.settings.screen_height)
             )
         pygame.display.set_caption("Inwazja goblinów")
+
+        #Utworzenie egzemplarza danych statystycznych oraz klasy Scoreboard
+        self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         # Wczytaj tło raz, aby nie ładować pliku w każdej klatce.
         self.bg = pygame.image.load('images/bg.png').convert()
@@ -168,6 +173,9 @@ class GoblinInvasion:
 
         for arrow in self.arrow.sprites():
             arrow.draw_arrow()
+
+        #Wyświetlanie punktacji
+        self.sb.show_score()
 
         #Wyświetlenie przycisku jeżeli gra jest nieaktywna
         if not self.game_active:

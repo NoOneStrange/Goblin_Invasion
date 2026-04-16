@@ -11,3 +11,4 @@ class GameStats:
         Inicjalizacja danych statystycznych, które mogą zmienić się w trakcie gry
         """
         self.elfs_left = self.settings.elf_limit
+        self.score = 0 
