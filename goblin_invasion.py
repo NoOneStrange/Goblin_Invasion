@@ -4,6 +4,7 @@ import math
 
 from settings import Settings
 from game_stats import GameStats
+from button import Button
 from elf import Elf
 from arrow import Arrow
 from goblin import Goblin
@@ -45,6 +46,9 @@ class GoblinInvasion:
         #Uruchomienie gry w stanie aktywnym
         self.game_active = False
 
+        #Utworzenie przycisku
+        self.play_button = Button(self, "Zagraj")
+
     def run_game(self):
         """Rozpoczęcie pętli głównej gry"""
         while True:
@@ -68,7 +72,32 @@ class GoblinInvasion:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
+
+    def _check_play_button(self, mouse_pos):
+        """Rozpoczęcie nowej gry"""
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.game_active:
+            #Wyzerowanie danych statystycznych gry
+            self.stats.reset_stats()
+            self.game_active = True
+
+            #Przywrócenie domyślnego wyglądu elfa po poprzedniej rozgrywce
+            self.elf.reset_appearance()
     
+            #Usunięcie zawartości list strzał i goblinów
+            self.arrow.empty()
+            self.goblins.empty()
+
+            #Utworzenie nowej armi i wyśrodkowanie elfa
+            self._create_army()
+            self.elf.center_elf()
+
+            #Ukrycie kursora
+            #pygame.mouse.set_visible(False)
+
     def _check_keydown_events(self, event):
         """Reakcja na wciśnięcie klawisza"""
         if event.key == pygame.K_RIGHT:
@@ -139,6 +168,10 @@ class GoblinInvasion:
 
         for arrow in self.arrow.sprites():
             arrow.draw_arrow()
+
+        #Wyświetlenie przycisku jeżeli gra jest nieaktywna
+        if not self.game_active:
+            self.play_button.draw_button()
 
         pygame.display.flip()
 

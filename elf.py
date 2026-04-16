@@ -10,8 +10,9 @@ class Elf:
         self.screen_rect = gi_game.screen.get_rect()
 
         #Ładowanie obrazów elfa i ich transformacja
-        self.image = pygame.image.load('images/elf.png')
-        base_w, base_h = self.image.get_size()
+        self.image_alive = pygame.image.load('images/elf.png')
+        self.image = self.image_alive
+        base_w, base_h = self.image_alive.get_size()
 
         self.image_dead = pygame.image.load('images/dead_elf.png')
         self.image_dead = pygame.transform.scale(self.image_dead, (base_w * 1.5, base_h * 1.5))
@@ -58,6 +59,10 @@ class Elf:
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
 
+    def reset_appearance(self):
+        """Przywrócenie domyślnej grafiki elfa."""
+        self.image = self.image_alive
+
     def killed_elf(self, pause_time=2, draw_callback=None):
         """Wyświetlenie grafiki martwego elfa przez czas pauzy"""
         self.image = self.image_dead
@@ -67,7 +72,7 @@ class Elf:
             self.blitme()
             pygame.display.flip()
         pygame.time.delay(int(pause_time * 1000))
-        self.image = pygame.image.load('images/elf.png')
+        self.reset_appearance()
 
     def forest_lost(self, pause_time=2, draw_callback=None):
         """Wyświetlenie grafiki martwego elfa przez czas pauzy"""
@@ -78,6 +83,6 @@ class Elf:
             self.blitme()
             pygame.display.flip()
         pygame.time.delay(int(pause_time * 1000))
-        self.image = pygame.image.load('images/elf.png')
+        self.reset_appearance()
 
 
