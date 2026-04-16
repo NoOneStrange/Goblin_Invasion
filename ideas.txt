@@ -4,3 +4,6 @@ do wprowadzenia:
 
 Później:
 dodanie dźwięków
+
+punkty -> nowe kolory goblinów co ileś punktów wychodzące z góry ekranu
+pojawianie się goblinów od góry ekranu i ich marsz w dół (wtedy ewentualne zwiększające się tempo) (do dopracowania)
