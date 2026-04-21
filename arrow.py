@@ -9,11 +9,17 @@ class Arrow(Sprite):
         super().__init__()
         self.screen = gi_game.screen
         self.settings = gi_game.settings
-        self.color = self.settings.arrow_color
+
+        #Wczytanie grafiki strzały i dopasowanie do aktualnych wymiarów z ustawień.
+        self.image = pygame.image.load('images/arrow.png')
+        self.image = pygame.transform.scale(
+            self.image,
+            (self.settings.arrow_width, self.settings.arrow_height)
+        )
 
         #Tworzenie strzały w punkcie (0,0)
         #następnie zdefiniowanie jej prawidłowego położenia
-        self.rect = pygame.Rect(0, 0, self.settings.arrow_width, self.settings.arrow_height)
+        self.rect = self.image.get_rect()
         self.rect.midtop = gi_game.elf.rect.midtop
 
         self.y = float(self.rect.y)
@@ -27,4 +33,4 @@ class Arrow(Sprite):
 
     def draw_arrow(self):
         """Wyświetlanie strzały na ekranie"""
-        pygame.draw.rect(self.screen, self.color, self.rect)
+        self.screen.blit(self.image, self.rect)

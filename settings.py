@@ -14,7 +14,7 @@ class Settings:
 
         #Ustawienia strzały
         self.arrow_speed = 6.0
-        self.arrow_width = 6
+        self.arrow_width = 12
         self.arrow_height = 20
         self.arrow_color = (150, 75, 0)
         self.arrow_allowed = 8
