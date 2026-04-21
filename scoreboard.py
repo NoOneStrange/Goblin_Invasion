@@ -1,9 +1,12 @@
 import pygame.font
+from pygame.sprite import Group
+from elf import Elf
 
 class Scoreboard:
     """Klasa przeznaczona do przedstawienia informacji o punktacji"""
 
     def __init__(self, gi_game):
+        self.gi_game = gi_game
         self.screen = gi_game.screen
         self.screen_rect = self.screen.get_rect()
         self.settings = gi_game.settings
@@ -17,6 +20,7 @@ class Scoreboard:
         self.prep_score()
         self.prep_high_score()
         self.prep_level()
+        self.prep_elfs()
 
     def prep_score(self):
         """Przekształcenie punktacji na wygenerowany obraz"""
@@ -58,8 +62,18 @@ class Scoreboard:
         self.level_rect.right = self.score_rect.right
         self.level_rect.top = self.score_rect.bottom + 10
 
+    def prep_elfs(self):
+        """Wyświetlanie liczby elfich wojowników"""
+        self.elfs = Group()
+        for elf_number in range(self.stats.elfs_left):
+            elf = Elf(self.gi_game)
+            elf.rect.x = 10 + elf_number * elf.rect.width
+            elf.rect.y = 10
+            self.elfs.add(elf)
+
     def show_score(self):
         """Wyświetlanie punktacji na ekranie"""
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)
         self.screen.blit(self.level_image, self.level_rect)
+        self.elfs.draw(self.screen)

@@ -86,6 +86,7 @@ class GoblinInvasion:
             self.stats.reset_stats()
             self.sb. prep_score()
             self.sb.prep_level()
+            self.sb.prep_elfs()
             self.game_active = True
 
             #Przywrócenie domyślnego wyglądu elfa po poprzedniej rozgrywce
@@ -196,6 +197,7 @@ class GoblinInvasion:
         """Reakcja na uderzenie goblina w elfa"""
         if self.stats.elfs_left > 0:
             self.stats.elfs_left -= 1
+            self.sb.prep_elfs()
 
             self.elf.killed_elf(2, self._update_screen)
 
@@ -212,6 +214,7 @@ class GoblinInvasion:
         """Reakcja na przejęcie lasu"""
         if self.stats.elfs_left > 0:
             self.stats.elfs_left -= 1
+            self.sb.prep_elfs()
 
             self.elf.forest_lost(2, self._update_screen)
 

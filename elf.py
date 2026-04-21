@@ -1,10 +1,13 @@
 import pygame
+from pygame.sprite import Sprite
 
-class Elf:
+class Elf(Sprite):
     """Klasa przeznaczona na modyfikacje elfiego wojownika"""
 
     def __init__(self, gi_game):
         """Inicjalizacja statku i jego położenia"""
+        super().__init__()
+
         self.screen = gi_game.screen
         self.settings = gi_game.settings
         self.screen_rect = gi_game.screen.get_rect()
