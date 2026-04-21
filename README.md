@@ -60,6 +60,6 @@ python goblin_invasion.py
 
 Ideas currently noted in the project:
 
-- replace the rectangle projectile with a graphical arrow,
+- add other goblins (red and blue),
 - animate the elf's leg movement,
 - add sound effects.
