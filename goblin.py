@@ -4,21 +4,23 @@ from pygame.sprite import Sprite
 class Goblin(Sprite):
     """Utworzenie pojedynczego przeciwnika."""
 
-    def __init__(self, gi_game, goblin_type='green'):
+    def __init__(self, gi_game):
         """Inicjacja i początkowe położenie."""
         super().__init__()
         self.screen = gi_game.screen
         self.settings = gi_game.settings
-        self.points = self.settings.goblin_points
 
-        #Ustawienie jednego typu goblina (zamiast nadpisywania 3 razy).
-        self.set_type(goblin_type)
+        #Zaczytanie goblinów
+        self.green_goblin()
+        self.red_goblin()
+        self.blue_goblin()
 
-    def _load_goblin(self, image_path, points):
-        """Wspólna inicjalizacja grafiki, rect i punktów goblina."""
-        self.image = pygame.image.load(image_path)
+    def green_goblin(self):
+        """Utworzenie goblina zielonego (standardowa punktacja)"""
+        #Wczytanie obraazu i definicja atrybutu rect
+        self.image = pygame.image.load('images/goblin_green.png')
         w, h = self.image.get_size()
-        self.image = pygame.transform.scale(self.image, (max(1, w // 4), max(1, h // 4)))
+        self.image = pygame.transform.scale(self.image, (w / 4, h / 4))
         self.rect = self.image.get_rect()
 
         #Umieszczenie goblina w pobliżu lewego górnego rogu
@@ -27,28 +29,36 @@ class Goblin(Sprite):
 
         #Przechowywanie dokładnego poziomego położenia goblina
         self.x = float(self.rect.x)
-        self.points = points
-
-    def set_type(self, goblin_type):
-        """Ustawienie typu goblina na podstawie nazwy."""
-        type_handlers = {
-            'green': self.green_goblin,
-            'red': self.red_goblin,
-            'blue': self.blue_goblin,
-        }
-        type_handlers.get(goblin_type, self.green_goblin)()
-
-    def green_goblin(self):
-        """Utworzenie goblina zielonego (standardowa punktacja)"""
-        self._load_goblin('images/goblin_green.png', self.settings.goblin_points)
     
     def red_goblin(self):
         """Utworzenie goblina czerwonego (standardowa punktacja pomnożona przez 2)"""
-        self._load_goblin('images/goblin_red.png', self.settings.red_goblin_points)
+        #Wczytanie obraazu i definicja atrybutu rect
+        self.image = pygame.image.load('images/goblin_red.png')
+        w, h = self.image.get_size()
+        self.image = pygame.transform.scale(self.image, (w / 4, h / 4))
+        self.rect = self.image.get_rect()
+
+        #Umieszczenie goblina w pobliżu lewego górnego rogu
+        self.rect.x = self.rect.width
+        self.rect.y = self.rect.height
+
+        #Przechowywanie dokładnego poziomego położenia goblina
+        self.x = float(self.rect.x)
     
     def blue_goblin(self):
         """Utworzenie goblina niebieskiego (standardowa punktacja pomnożona przez 4)"""
-        self._load_goblin('images/goblin_blue.png', self.settings.blue_goblin_points)
+        #Wczytanie obraazu i definicja atrybutu rect
+        self.image = pygame.image.load('images/goblin_blue.png')
+        w, h = self.image.get_size()
+        self.image = pygame.transform.scale(self.image, (w / 4, h / 4))
+        self.rect = self.image.get_rect()
+
+        #Umieszczenie goblina w pobliżu lewego górnego rogu
+        self.rect.x = self.rect.width
+        self.rect.y = self.rect.height
+
+        #Przechowywanie dokładnego poziomego położenia goblina
+        self.x = float(self.rect.x)
     
     def check_edges(self):
         """Zwraca True jeżeli goblin dotrze do krawędzi ekranu"""
