@@ -12,8 +12,8 @@ class Goblin(Sprite):
 
         #Zaczytanie goblinów
         self.green_goblin()
-        self.red_goblin()
-        self.blue_goblin()
+        #self.red_goblin()
+        #self.blue_goblin()
 
     def green_goblin(self):
         """Utworzenie goblina zielonego (standardowa punktacja)"""

@@ -85,6 +85,7 @@ class GoblinInvasion:
             #Wyzerowanie danych statystycznych gry
             self.stats.reset_stats()
             self.sb. prep_score()
+            self.sb.prep_level()
             self.game_active = True
 
             #Przywrócenie domyślnego wyglądu elfa po poprzedniej rozgrywce
@@ -154,6 +155,10 @@ class GoblinInvasion:
             #Pozbycie się istniejących strzał i utworzenie nowej armi
             self.arrow.empty()
             self._create_army()
+
+            #Inkrementacja numeru poziomu
+            self.stats.level += 1
+            self.sb.prep_level()
 
         if collisions:
             for goblins in collisions.values():

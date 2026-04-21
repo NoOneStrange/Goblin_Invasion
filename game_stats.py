@@ -14,3 +14,4 @@ class GameStats:
         """
         self.elfs_left = self.settings.elf_limit
         self.score = 0 
+        self.level = 1
