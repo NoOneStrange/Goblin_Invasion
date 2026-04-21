@@ -1,6 +1,7 @@
 import sys
 import pygame
 import math
+import random
 
 from settings import Settings
 from game_stats import GameStats
@@ -149,23 +150,34 @@ class GoblinInvasion:
 
     def _check_arrow_goblin_collisions(self):
         """Reakcja na kolizję między strzałą a goblinem"""
-        #Sprawdzenie trafienia i jeżeli wystąpiło, usunięcie strzały i przeciwnika
-        collisions = pygame.sprite.groupcollide(self.arrow, self.goblins, True, True)
+        #Strzała znika po trafieniu; goblin znika dopiero po wyzerowaniu hit_points.
+        collisions = pygame.sprite.groupcollide(self.arrow, self.goblins, True, False)
+
+        if collisions:
+            gained_score = 0
+            for hit_goblins in collisions.values():
+                for goblin in hit_goblins:
+                    if not goblin.alive():
+                        continue
+
+                    goblin.hit_points -= 1
+                    if goblin.hit_points <= 0:
+                        gained_score += goblin.points
+                        goblin.kill()
+
+            if gained_score:
+                self.stats.score += gained_score
+                self.sb.prep_score()
+                self.sb.check_high_score()
     
         if not self.goblins:
             #Pozbycie się istniejących strzał i utworzenie nowej armi
             self.arrow.empty()
-            self._create_army()
 
             #Inkrementacja numeru poziomu
             self.stats.level += 1
             self.sb.prep_level()
-
-        if collisions:
-            for goblins in collisions.values():
-                self.stats.score += self.settings.goblin_points * len(goblins)
-            self.sb.prep_score()
-            self.sb.check_high_score()
+            self._create_army()
  
     def _update_screen(self):
         """Uaktualnienie obrazów na ekranie i przejście do nowego ekranu."""
@@ -239,19 +251,49 @@ class GoblinInvasion:
         goblin = Goblin(self)
         goblin_width, goblin_height = goblin.rect.size
 
+        positions = []
         current_x, current_y = goblin_width, goblin_height
         while current_y < (self.settings.screen_height - 5 * goblin_height):
             while current_x < (self.settings.screen_width - 2 * goblin_width): #Gdyby ograniczyć się do pierwszej części nawiasu, jeden goblin będzie za prawą stroną ekranu, stąd margines
-                self._create_goblin(current_x, current_y)
+                positions.append((current_x, current_y))
                 current_x += 2 * goblin_width
 
             #Wyzerowanie x oraz zejście niżej y przy końcu rzędu
             current_x = goblin_width
             current_y += 2 * goblin_height
 
-    def _create_goblin(self, x_position, y_position):
+        total_goblins = len(positions)
+        max_special = total_goblins // 2
+        special_indices = set()
+        red_indices = set()
+        blue_indices = set()
+
+        if self.stats.level >= 3 and total_goblins > 0:
+            special_count = random.randint(0, max_special)
+            if special_count > 0:
+                special_indices = set(random.sample(range(total_goblins), special_count))
+
+            if self.stats.level >= 6:
+                red_count = random.randint(0, special_count)
+                if red_count > 0:
+                    red_indices = set(random.sample(list(special_indices), red_count))
+                blue_indices = special_indices - red_indices
+            else:
+                red_indices = special_indices
+
+        for index, (x_position, y_position) in enumerate(positions):
+            if index in red_indices:
+                goblin_type = 'red'
+            elif index in blue_indices:
+                goblin_type = 'blue'
+            else:
+                goblin_type = 'green'
+
+            self._create_goblin(x_position, y_position, goblin_type)
+
+    def _create_goblin(self, x_position, y_position, goblin_type='green'):
         """Tworzenie goblina w rzędzie"""
-        new_goblin = Goblin(self)
+        new_goblin = Goblin(self, goblin_type)
         new_goblin.x = x_position
         new_goblin.rect.x = x_position
         new_goblin.rect.y = y_position
