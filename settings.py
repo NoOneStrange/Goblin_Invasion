@@ -32,6 +32,8 @@ class Settings:
         
         #Punktacja
         self.goblin_points = 50
+        self.red_goblin_points = self.goblin_points * 2
+        self.blue_goblin_points = self.goblin_points * 4
 
 
 
